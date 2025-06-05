@@ -8,7 +8,8 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true },
     age: { type: Number },
     sex: { type: String },
-    preferences: { type: [String] },
+city: { type: String }, 
+    preferences: { type: [String], default: [] },   
     points: { type: Number, default: 0 },
     can_comment: { type: Number, default: 0 },
 });

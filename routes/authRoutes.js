@@ -1,4 +1,6 @@
 const express = require('express');
+  const bcrypt = require('bcryptjs');
+
 const nodemailer = require('nodemailer');
 const User = require('../models/User');
 const { generateToken } = require('../config/auth');
@@ -54,7 +56,7 @@ router.post('/signup', async (req, res) => {
 
 // OTP Verification Route
 router.post('/verify', async (req, res) => {
-  const { full_name,email,  phone_number, password, age, sex ,otp} = req.body;
+  const { full_name,email,  phone_number, password, age, sex ,city,otp} = req.body;
 
   const stored = otpStore.get(email);
 
@@ -69,7 +71,7 @@ router.post('/verify', async (req, res) => {
 
   // OTP is valid, create user
 try {
-  const user = await User.create({ full_name,email, phone_number, password, age, sex });
+  const user = await User.create({ full_name,email, phone_number, password, age, sex,city });
   otpStore.delete(email);
   res.status(201).json({
     _id: user._id,
@@ -86,16 +88,30 @@ try {
 router.post('/login', async (req, res) => {
   const { phone_number, password } = req.body;
 
-  const user = await User.findOne({ phone_number });
-  if (user && (await user.matchPassword(password))) {
+  console.log('Login attempt for phone:', phone_number);
+ const phone = req.body.phone_number.trim();
+const user = await User.findOne({ phone_number: phone });
+
+  if (!user) {
+    console.log('User not found');
+    return res.status(401).send('Invalid credentials');
+  }
+
+  const isMatch = await user.matchPassword(password);
+  console.log('Password match:', isMatch);
+
+  if (isMatch) {
     res.json({
       _id: user._id,
       phone_number: user.phone_number,
       token: generateToken(user._id),
     });
   } else {
+
+    console.log('Password does not match');
     res.status(401).send('Invalid credentials');
   }
 });
+
 
 module.exports = router;

@@ -1,12 +1,11 @@
 const express = require('express');
 const Reservation = require('../models/Reservation');
-const { authMiddleware } = require('../config/auth');
 const router = express.Router();
 
-// Create a new Reservation
-router.post('/', authMiddleware, async (req, res) => {
+// Create a new Reservation (Public)
+router.post('/', async (req, res) => {
     try {
-        const reservation = new Reservation({ ...req.body, user_id: req.user });
+        const reservation = new Reservation(req.body); // Removed user_id injection
         await reservation.save();
         res.status(201).send(reservation);
     } catch (err) {
@@ -14,18 +13,18 @@ router.post('/', authMiddleware, async (req, res) => {
     }
 });
 
-// Get all Reservations for a User
-router.get('/', authMiddleware, async (req, res) => {
+// Get all Reservations (Public)
+router.get('/', async (req, res) => {
     try {
-        const reservations = await Reservation.find({ user_id: req.user }).populate('offer_id');
+        const reservations = await Reservation.find().populate('offer_id');
         res.status(200).send(reservations);
     } catch (err) {
         res.status(500).send(err);
     }
 });
 
-// Update Reservation by ID
-router.put('/:id', authMiddleware, async (req, res) => {
+// Update Reservation by ID (Public)
+router.put('/:id', async (req, res) => {
     try {
         const reservation = await Reservation.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!reservation) return res.status(404).send();
@@ -35,8 +34,8 @@ router.put('/:id', authMiddleware, async (req, res) => {
     }
 });
 
-// Delete Reservation by ID
-router.delete('/:id', authMiddleware, async (req, res) => {
+// Delete Reservation by ID (Public)
+router.delete('/:id', async (req, res) => {
     try {
         const reservation = await Reservation.findByIdAndDelete(req.params.id);
         if (!reservation) return res.status(404).send();

@@ -1,10 +1,9 @@
 const express = require('express');
 const Destination = require('../models/Destination');
-const { authMiddleware } = require('../config/auth');
 const router = express.Router();
 
-// Create a Destination
-router.post('/', authMiddleware, async (req, res) => {
+// Create a Destination (Public)
+router.post('/', async (req, res) => {
     try {
         const destination = new Destination(req.body);
         await destination.save();
@@ -14,7 +13,7 @@ router.post('/', authMiddleware, async (req, res) => {
     }
 });
 
-// Get all Destinations
+// Get all Destinations (Public)
 router.get('/', async (req, res) => {
     try {
         const destinations = await Destination.find();
@@ -24,7 +23,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Get Destination by ID
+// Get Destination by ID (Public)
 router.get('/:id', async (req, res) => {
     try {
         const destination = await Destination.findById(req.params.id);
@@ -35,8 +34,8 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// Update Destination by ID
-router.put('/:id', authMiddleware, async (req, res) => {
+// Update Destination by ID (Public)
+router.put('/:id', async (req, res) => {
     try {
         const destination = await Destination.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!destination) return res.status(404).send();
@@ -46,8 +45,8 @@ router.put('/:id', authMiddleware, async (req, res) => {
     }
 });
 
-// Delete Destination by ID
-router.delete('/:id', authMiddleware, async (req, res) => {
+// Delete Destination by ID (Public)
+router.delete('/:id', async (req, res) => {
     try {
         const destination = await Destination.findByIdAndDelete(req.params.id);
         if (!destination) return res.status(404).send();

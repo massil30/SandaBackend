@@ -6,6 +6,8 @@ const agencyRoutes = require('./routes/agencyRoutes');
 const destinationRoutes = require('./routes/destinationRoutes');
 const offerRoutes = require('./routes/offerRoutes');
 const feedbackRoutes = require('./routes/feedbackRoutes');
+const reservationRoutes = require('./routes/reservationRoutes');
+
 require('dotenv').config();
 
 
@@ -25,6 +27,7 @@ app.use('/api/agencies', agencyRoutes);
 app.use('/api/destinations', destinationRoutes);
 app.use('/api/offers', offerRoutes);
 app.use('/api/feedbacks', feedbackRoutes);
+app.use('/api/reservations', reservationRoutes);
 
 // Start the server
 app.listen(PORT, () => {
